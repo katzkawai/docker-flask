@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メモ帳アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .note-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .notes-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .note {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            position: relative;
+        }
+        .note:last-child {
+            border-bottom: none;
+        }
+        .note-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 5px;
+        }
+        .note-time {
+            font-size: 12px;
+            color: #666;
+        }
+        .delete-btn {
+            position: absolute;
+            right: 0;
+            top: 15px;
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+        .no-notes {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>メモ帳アプリ</h1>
+    
+    <div class="note-form">
+        <form action="/add" method="POST">
+            <textarea name="content" placeholder="新しいメモを入力してください..." required></textarea>
+            <button type="submit">メモを追加</button>
+        </form>
+    </div>
+    
+    <div class="notes-container">
+        <h2>保存されたメモ</h2>
+        {% if notes %}
+            {% for note in notes|reverse %}
+            <div class="note">
+                <div class="note-content">{{ note.content }}</div>
+                <div class="note-time">{{ note.created_at }}</div>
+                <a href="/delete/{{ note.id }}" class="delete-btn" onclick="return confirm('このメモを削除しますか？')">削除</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-notes">まだメモがありません。最初のメモを追加してください！</p>
+        {% endif %}
+    </div>
+</body>
+</html>
