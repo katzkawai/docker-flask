@@ -48,17 +48,67 @@ docker run -d -p 5000:5000 --name my-memo-app katzkawai/memo-app:latest
 
 メモデータをコンテナの再起動後も保持したい場合：
 
+#### 準備
+
 ```bash
 # データ保存用ディレクトリを作成
 mkdir -p ./memo-data
-echo '[]' > ./memo-data/notes.json
 
+# 初期データファイルを作成（空の配列）
+echo '[]' > ./memo-data/notes.json
+```
+
+#### コンテナの起動
+
+```bash
 # ボリュームマウントで実行
 docker run -d -p 5000:5000 \
   -v $(pwd)/memo-data/notes.json:/app/notes.json \
   --name memo-app-persistent \
   katzkawai/memo-app:latest
 ```
+
+#### オプションの説明
+
+- `-d`: バックグラウンドで実行（デタッチモード）
+- `-p 5000:5000`: ホストのポート5000をコンテナのポート5000にマッピング
+- `-v $(pwd)/memo-data/notes.json:/app/notes.json`: ローカルのnotes.jsonファイルをコンテナ内の/app/notes.jsonにマウント
+- `--name memo-app-persistent`: コンテナに名前を付ける（管理しやすくするため）
+
+#### データの確認
+
+```bash
+# 保存されたメモを確認
+cat ./memo-data/notes.json
+
+# メモが追加されると、以下のような形式で保存されます
+# [
+#   {
+#     "id": 1,
+#     "content": "買い物リスト\n- 牛乳\n- パン\n- 卵",
+#     "created_at": "2025-06-09 21:30:15"
+#   }
+# ]
+```
+
+#### コンテナの再起動とデータの永続性
+
+```bash
+# コンテナを停止
+docker stop memo-app-persistent
+
+# コンテナを再起動（データは保持される）
+docker start memo-app-persistent
+
+# または、コンテナを削除して新しく作成しても、データは保持される
+docker rm memo-app-persistent
+docker run -d -p 5000:5000 \
+  -v $(pwd)/memo-data/notes.json:/app/notes.json \
+  --name memo-app-persistent \
+  katzkawai/memo-app:latest
+```
+
+この方法により、コンテナを削除・再作成してもメモデータは `./memo-data/notes.json` に保存され続けます。
 
 ### 4. 別のポートで実行
 
